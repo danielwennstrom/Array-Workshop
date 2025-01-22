@@ -1,5 +1,7 @@
 package se.lexicon;
 
+import java.util.Arrays;
+
 /**
  * The NameRepository class provides methods to manage a list of names.
  * It offers functionalities such as adding, removing, finding, and updating names.
@@ -16,7 +18,7 @@ public class NameRepository {
      */
     public static int getSize() {
         //todo: PART 1: implement getSize method
-        return 0;
+        return NameRepository.names.length;
     }
 
 
@@ -27,6 +29,7 @@ public class NameRepository {
      */
     public static void setNames(final String[] names) {
         //todo: PART 1: implement setNames method
+        NameRepository.names = names;
     }
 
 
@@ -35,6 +38,7 @@ public class NameRepository {
      */
     public static void clear() {
         //todo: PART 1: implement clear method
+        NameRepository.names = new String[0];
     }
 
 
@@ -45,7 +49,7 @@ public class NameRepository {
      */
     public static String[] findAll() {
         //todo: PART 1: implement findAll method
-        return null;
+        return NameRepository.names;
     }
 
 
@@ -57,6 +61,12 @@ public class NameRepository {
      */
     public static String find(final String fullName) {
         //todo: PART 2: implement find method
+        for (String name : NameRepository.names) {
+            if (name.equalsIgnoreCase(fullName)) {
+                return name;
+            }
+        }
+
         return null;
     }
 
@@ -69,7 +79,25 @@ public class NameRepository {
      */
     public static boolean add(final String fullName) {
         //todo: PART 2: implement add method
-        return false;
+        if (fullName == null) {
+            throw new IllegalArgumentException("The full name cannot be null.");
+        }
+
+        int size = getSize();
+        String[] names = NameRepository.names;
+
+        for (int i = 0; i < size; i++) {
+            if (names[i] != null && names[i].equalsIgnoreCase(fullName)) {
+                return false;
+            }
+        }
+
+        String[] newNames = Arrays.copyOf(names, size + 1);
+        newNames[size] = fullName;
+
+        setNames(newNames);
+
+        return true;
     }
 
 
@@ -81,7 +109,30 @@ public class NameRepository {
      */
     public static String[] findByFirstName(final String firstName) {
         //todo: PART 3: findByFirstName method
-        return null;
+        if (firstName == null) {
+            throw new IllegalArgumentException("The first name cannot be null.");
+        }
+
+        String[] names = NameRepository.names;
+        int size = getSize();
+        String[] matchedNames = new String[size];
+        int count = 0;
+
+        for (String name : names) {
+            if (name != null) {
+                int spaceIndex = name.indexOf(" ");
+                if (spaceIndex != -1) {
+                    String subFirstName = name.substring(0, spaceIndex);
+
+                    if (subFirstName.equalsIgnoreCase(firstName)) {
+                        matchedNames[count] = name;
+                        count++;
+                    }
+                }
+            }
+        }
+
+        return Arrays.copyOf(matchedNames, count);
     }
 
 
@@ -93,7 +144,30 @@ public class NameRepository {
      */
     public static String[] findByLastName(final String lastName) {
         //todo: PART 3: implement findByLastName method
-        return null;
+        if (lastName == null) {
+            throw new IllegalArgumentException("The last name cannot be null.");
+        }
+
+        String[] names = NameRepository.names;
+        int size = getSize();
+        String[] matchedNames = new String[size];
+        int count = 0;
+
+        for (String name : names) {
+            if (name != null) {
+                int spaceIndex = name.indexOf(" ");
+                if (spaceIndex != -1) {
+                    String subLastName = name.substring(spaceIndex + 1);
+
+                    if (subLastName.equalsIgnoreCase(lastName)) {
+                        matchedNames[count] = name;
+                        count++;
+                    }
+                }
+            }
+        }
+
+        return Arrays.copyOf(matchedNames, count);
     }
 
 
@@ -106,9 +180,33 @@ public class NameRepository {
      */
     public static boolean update(final String original, final String updatedName) {
         //todo: PART 3: implement update method
+        if (original == null || updatedName == null) {
+            throw new IllegalArgumentException("The original and updated names cannot be null.");
+        }
+
+        String[] names = NameRepository.names;
+        int size = getSize();
+        int foundIndex = -1;
+
+        for (int i = 0; i < size; i++) {
+            if (names[i] != null) {
+                if (names[i].equalsIgnoreCase(updatedName)) {
+                    return false;
+                } else if (names[i].equalsIgnoreCase(original)) {
+                    foundIndex = i;
+                }
+            }
+        }
+
+        if (foundIndex != -1) {
+            names[foundIndex] = updatedName;
+            setNames(names);
+
+            return true;
+        }
+
         return false;
     }
-
 
     /**
      * Removes a name from the names array, case-insensitively.
@@ -118,8 +216,30 @@ public class NameRepository {
      */
     public static boolean remove(final String fullName) {
         //todo: PART 4: implement remove method
-        return false;
+        if (fullName == null) {
+            throw new IllegalArgumentException("The full name cannot be null.");
+        }
+
+        String[] names = NameRepository.names;
+        int size = getSize();
+        String[] newNames = new String[size - 1];
+        int newIndex = 0;
+        boolean wasFound = false;
+
+        for (int i = 0; i < size; i++) {
+            if (names[i] != null) {
+                if (!wasFound && names[i].equalsIgnoreCase(fullName)) {
+                    wasFound = true;
+                } else if (newIndex < newNames.length){
+                    newNames[newIndex++] = names[i];
+                }
+            }
+        }
+
+        if (wasFound) {
+            setNames(Arrays.copyOf(newNames, newIndex));
+        }
+
+        return wasFound;
     }
-
-
 }
