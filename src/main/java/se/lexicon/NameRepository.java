@@ -61,6 +61,10 @@ public class NameRepository {
      */
     public static String find(final String fullName) {
         //todo: PART 2: implement find method
+        if (fullName == null) {
+            throw new IllegalArgumentException("The full name cannot be null.");
+        }
+
         for (String name : NameRepository.names) {
             if (name.equalsIgnoreCase(fullName)) {
                 return name;
